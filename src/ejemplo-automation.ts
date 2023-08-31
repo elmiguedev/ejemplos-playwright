@@ -1,45 +1,43 @@
 import { chromium } from "playwright";
-enum TIPO_CONTACTO {
-  PRIMER_TIPO = "Primer tipo",
-  SEGUNDO_TIPO = "Segundo tipo",
-  TERCER_TIPO = "Tercer tipo",
+
+enum CLOSE_ENCOUNTER_TYPE {
+  FIRST_TYPE = "Primer tipo",
+  SECOND_TYPE = "Segundo tipo",
+  THIRD_TYPE = "Tercer tipo",
 }
 
 const getRandomType = () => {
-  const values = Object.values(TIPO_CONTACTO);
+  const values = Object.values(CLOSE_ENCOUNTER_TYPE);
   const index = Math.floor(Math.random() * values.length);
-  return values[index] as TIPO_CONTACTO;
-
+  return values[index] as CLOSE_ENCOUNTER_TYPE;
 }
 
-
-
-function generateRandomFullName() {
-  const firstNames = ['John', 'Mary', 'David', 'Sarah', 'Michael', 'Emily', 'James', 'Emma', 'Christopher', 'Olivia'];
-  const lastNames = ['Smith', 'Johnson', 'Brown', 'Taylor', 'Miller', 'Anderson', 'Wilson', 'Clark', 'Walker', 'Hall'];
-  const randomFirstNameIndex = Math.floor(Math.random() * firstNames.length);
-  const randomLastNameIndex = Math.floor(Math.random() * lastNames.length);
-  const randomFirstName = firstNames[randomFirstNameIndex];
-  const randomLastName = lastNames[randomLastNameIndex];
-  return randomFirstName + ' ' + randomLastName;
+const generateRandomFullName = () => {
+  const names = [
+    "Tom Delonge",
+    "Mark Hoppus",
+    "Travis Barker",
+    "Matt Skiba",
+    "Scott Raynor",
+  ]
+  const randomNameIndex = Math.floor(Math.random() * names.length);
+  return names[randomNameIndex]
 }
-
 
 const init = async () => {
   const url = "https://forms.gle/xR1bQrNDnq3FqHbS6";
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: false, slowMo: 1000 });
   const page = await browser.newPage();
 
   const alienVictim = {
-    nombre: generateRandomFullName(),
-    tipoContacto: getRandomType(),
+    name: generateRandomFullName(),
+    type: getRandomType(),
   }
 
   await page.goto(url);
-  await page.getByLabel('Nombre del la persona *').fill(alienVictim.nombre);
-  await page.getByLabel(alienVictim.tipoContacto).click();
+  await page.getByLabel('Nombre del la persona').fill(alienVictim.name);
+  await page.getByLabel(alienVictim.type).click();
   await page.getByRole('button', { name: 'Enviar' }).click();
-
   await page.getByText('Se ha registrado tu respuesta');
 
   await browser.close();

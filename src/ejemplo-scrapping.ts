@@ -1,33 +1,35 @@
-import { chromium } from "playwright";
+import { chromium, Locator } from "playwright";
+
+const getArticle = async (article: Locator) => {
+  const type = await article.locator("div.cintillo>div").first().allInnerTexts();
+  const title = await article.locator("h2").textContent();
+  const description = await article.locator("h3").textContent();
+  return {
+    type: type[0],
+    title,
+    description
+  }
+}
 
 const init = async () => {
+  const url = "https://eldoce.tv";
   const browser = await chromium.launch({ headless: false });
   const page = await browser.newPage();
-  await page.goto("https://eldoce.tv");
+
+  await page.goto(url);
   await page.locator('#close').click();
 
-  const notas = await page.locator(".nota-box");
-  const elementos = await notas.all();
+  const articlesLocators = await page.locator(".nota-box").all();
+  const articles: any[] = [];
 
-  const articulos: any[] = [];
-
-  await Promise.all(elementos.map(async (elemento) => {
-    const tipo = await elemento.locator("div.cintillo>div").first().allInnerTexts();
-    const titulo = await elemento.locator("h2").textContent();
-    const descripcion = await elemento.locator("h3").textContent();
-    const articulo = {
-      tipo: tipo[0],
-      titulo,
-      descripcion
-    };
-
-    if (articulo.tipo)
-      articulos.push(articulo);
+  await Promise.all(articlesLocators.map(async (articleLocator) => {
+    const article = await getArticle(articleLocator);
+    if (article.type)
+      articles.push(article);
   }));
 
-  console.log(articulos);
+  console.log(articles);
   await browser.close();
-
 }
 
 init();
