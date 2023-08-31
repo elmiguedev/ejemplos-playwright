@@ -1,0 +1,17 @@
+{
+  "name": "ejemplos-playwright",
+  "scripts": {
+    "codegen": "playwright codegen",
+    "ejemplo-scrapping": "ts-node src/ejemplo-scrapping.ts",
+    "ejemplo-automation": "ts-node src/ejemplo-automation.ts",
+    "test": "npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.37.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
